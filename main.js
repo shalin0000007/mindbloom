@@ -31,6 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Emergency global logout for console use
+    window.mindbloomEmergencyLogout = function() {
+        localStorage.removeItem('mindbloom_loggedIn');
+        localStorage.removeItem('mindbloom_user');
+        window.location.href = 'login.html';
+    };
+
+
     // Motivational Quotes
     const quotes = [
         { text: "The best time to relax is when you don't have time for it.", author: "Sydney J. Harris" },
