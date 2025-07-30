@@ -247,7 +247,6 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="mood.html">My Mood</a></li>
-                <li><a href="journal.html">Journal Space</a></li>
                 <li><a href="relax.html">Relax Zone</a></li>
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="profile.html">My Profile</a></li>
@@ -304,8 +303,10 @@
     <!-- Tooltip element -->
     <div class="tooltip" id="tooltip"></div>
 
+    <script src="auth.js"></script>
+    <script src="blueprint.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // --- GSAP Animations ---
             gsap.from('.control-panel', { duration: 0.8, x: -100, opacity: 0, ease: 'power2.out' });
             gsap.from('.visualization-panel', { duration: 0.8, x: 100, opacity: 0, ease: 'power2.out', delay: 0.2 });
@@ -354,6 +355,12 @@
 
             let nodes = [];
             let links = [];
+            // Load from localStorage (per user)
+            if (window.loadBlueprint) {
+                const data = await window.loadBlueprint();
+                nodes = Array.isArray(data.nodes) ? data.nodes : [];
+                links = Array.isArray(data.links) ? data.links : [];
+            }
             // Switched to a brighter color scheme for the dark background
             const tagColors = d3.scaleOrdinal(d3.schemeSet3);
 
@@ -453,7 +460,7 @@
 
             // --- Form Submission ---
             const form = document.getElementById('log-form');
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 const description = document.getElementById('description').value;
@@ -470,6 +477,7 @@
 
                 nodes.push(newNode);
                 updateGraph();
+                if (window.saveBlueprint) await window.saveBlueprint(nodes, links);
                 form.reset();
                 tags = [];
                 tagContainer.innerHTML = '';
@@ -494,6 +502,8 @@
             });
 
             updateGraph();
+            // Save on every graph update (optional, for robustness)
+            if (window.saveBlueprint) await window.saveBlueprint(nodes, links);
         });
     </script>
 </body>

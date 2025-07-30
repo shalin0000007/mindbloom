@@ -8,9 +8,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check login status
     const loggedIn = localStorage.getItem('mindbloom_loggedIn');
-    if (loggedIn !== 'true') {
+    // Only redirect to index.html if NOT already on index.html
+    const isIndex = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '';
+    if (loggedIn !== 'true' && !isIndex) {
         window.location.href = 'index.html';
-        return; 
+        return;
     }
 
     // Set welcome message
